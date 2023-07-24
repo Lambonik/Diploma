@@ -1,47 +1,62 @@
 package ru.netology.data;
 
 import com.github.javafaker.Faker;
+import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.experimental.UtilityClass;
 
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
+import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
+
 
 public class DataGenerator {
+    public static class Query {
+        public Query() {
+        }
+
+        @SneakyThrows
+        public static String queryPayment(String paymentType) {
+            String statusSQL = null;
+            if (paymentType == "Payment") {
+                statusSQL = "SELECT * FROM payment_entity LIMIT 1;";
+            } else if (paymentType == "Credit") {
+                statusSQL = "SELECT * FROM credit_request_entity LIMIT 1;";
+            }
+            var status = "0";
+            try (
+                    var connection = DriverManager.getConnection("jdbc:mysql://192.168.99.100:3306/app", "app", "pass");
+                    var statusStmt = connection.prepareStatement(statusSQL);
+            ) {
+                try (var rs = statusStmt.executeQuery()) {
+                    while (rs.next()) {
+                        status = rs.getString("status");
+                    }
+                }
+            }
+            return status;
+        }
+    }
+
     static Faker faker = new Faker(new Locale("en"));
-    static int currentYear = Integer.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("yy")));
-    static String randomYear = Integer.toString(faker.number().numberBetween(currentYear, currentYear + 5));
 
     private DataGenerator() {
 
     }
 
     public static String generateCardNumber() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/yy");
         String cardNumber = Long.toString(faker.number().randomNumber(16, true));
         return cardNumber;
     }
 
     public static String generateMonth() {
-        String month;
-        var random = new SecureRandom();
-        List<String> enableMonth = List.of("12", "11", "10", "09", "08", "07", "06", "05", "04", "03", "02", "01");
-        if (Integer.valueOf(randomYear) == currentYear) {
-            month = enableMonth.get(random.nextInt(enableMonth.size() - Integer.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("MM"))) + 1));
-        } else {
-            month = enableMonth.get(random.nextInt(enableMonth.size()));
-        }
+        String month = LocalDate.now().format(DateTimeFormatter.ofPattern("MM"));
         return month;
     }
 
     public static String generateYear() {
-        //int currentYear = Integer.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("yy")));
-        //String year = Integer.toString(faker.number().numberBetween(currentYear,currentYear+5));
-        String year = randomYear;
+        String year = LocalDate.now().format(DateTimeFormatter.ofPattern("yy"));
         return year;
     }
 
@@ -56,17 +71,32 @@ public class DataGenerator {
     }
 
     public static String generateCardHolderCyrillic() {
-        char[] alphabetA = new String("абвгдеёжзийклмнопрстуфхцчшщъыьэюя").toCharArray();
-        String cardHolderCyrillic = String.valueOf(alphabetA[ThreadLocalRandom.current().nextInt(0, alphabetA.length - 1)]);
+        Faker faker = new Faker(new Locale("ru"));
+        String cardHolderCyrillic = faker.name().firstName();
         return cardHolderCyrillic;
     }
+
+    public static String generateApprovedCardNumber() {
+        String approvedCardNumber = "4444 4444 4444 4441";
+        return approvedCardNumber;
+    }
+
+    public static String generateDeclinedCardNumber() {
+        String declinedCardNumber = "4444 4444 4444 4442";
+        return declinedCardNumber;
+    }
+
+//    public static String generate15DigitNumber() {
+//        String 15DigitNumber=generateCardNumber().substring(1);
+//        return 15DigitNumber;
+//    }
 
     public static class Payment {
         private Payment() {
         }
 
         public static CardInfo generateCard() {
-            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode(), generateCardHolderCyrillic());
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode(), generateCardHolderCyrillic(), generateApprovedCardNumber(), generateDeclinedCardNumber());
             return card;
         }
     }
@@ -79,5 +109,7 @@ public class DataGenerator {
         String cardHolder;
         String securityCode;
         String cardHolderCyrillic;
+        String approvedCardNumber;
+        String declinedCardNumber;
     }
 }
