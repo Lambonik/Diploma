@@ -18,6 +18,9 @@ public class DataGenerator {
 
         @SneakyThrows
         public static String queryPayment(String paymentType) {
+            //String url = System.getProperty("spring.datasource.url");
+            String url = "jdbc:mysql://192.168.99.100:3306/app";
+            //String url = "jdbc:postgresql://192.168.99.100:5432/app";
             String statusSQL = null;
             if (paymentType == "Payment") {
                 statusSQL = "SELECT * FROM payment_entity LIMIT 1;";
@@ -26,7 +29,7 @@ public class DataGenerator {
             }
             var status = "0";
             try (
-                    var connection = DriverManager.getConnection("jdbc:mysql://192.168.99.100:3306/app", "app", "pass");
+                    var connection = DriverManager.getConnection(url, "app", "pass");
                     var statusStmt = connection.prepareStatement(statusSQL);
             ) {
                 try (var rs = statusStmt.executeQuery()) {
