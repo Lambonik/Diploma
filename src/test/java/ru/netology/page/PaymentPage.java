@@ -2,6 +2,7 @@ package ru.netology.page;
 
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import lombok.val;
 import org.openqa.selenium.By;
 import ru.netology.data.DataGenerator;
 
@@ -22,16 +23,16 @@ public class PaymentPage {
     String xpathInputFieldSub = "//*[@class='input__sub']";
     public static String typePayment;
 
-    private DataGenerator.CardInfo card;
-
     public PaymentPage buttonSelectFormPayment() {
         $$("button").find(exactText("Купить")).click();
+        $$("h3").find(exactText("Оплата по карте")).shouldBe(exist, Duration.ofSeconds(0));
         typePayment = "Payment";
         return this;
     }
 
     public PaymentPage buttonSelectFormCredit() {
         $$("button").find(exactText("Купить в кредит")).click();
+        $$("h3").find(exactText("Кредит по данным карты")).shouldBe(exist, Duration.ofSeconds(0));
         typePayment = "Credit";
         return this;
     }
@@ -69,92 +70,42 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage fillingFieldsWhereCardNumberIs(String testedValue) {
-        card = DataGenerator.Payment.generateCard();
-        $(By.xpath(xpathFieldCardNumber + xpathInputField)).setValue(testedValue);
-        $(By.xpath(xpathFieldMonth + xpathInputField)).setValue(card.getMonth());
-        $(By.xpath(xpathFieldYear + xpathInputField)).setValue(card.getYear());
-        $(By.xpath(xpathFieldCardHolder + xpathInputField)).setValue(card.getCardHolder());
-        $(By.xpath(xpathFieldSecurityCode + xpathInputField)).setValue(card.getSecurityCode());
-        return this;
-    }
-
-    public PaymentPage fillingFieldsWhereMonthIs(String testedValue, Integer valueYear) {
-        card = DataGenerator.Payment.generateCard();
-        $(By.xpath(xpathFieldCardNumber + xpathInputField)).setValue(card.getCardNumber());
-        $(By.xpath(xpathFieldMonth + xpathInputField)).setValue(testedValue);
-        $(By.xpath(xpathFieldYear + xpathInputField)).setValue(String.valueOf(valueYear));
-        $(By.xpath(xpathFieldCardHolder + xpathInputField)).setValue(card.getCardHolder());
-        $(By.xpath(xpathFieldSecurityCode + xpathInputField)).setValue(card.getSecurityCode());
-        return this;
-    }
-
-    public PaymentPage fillingFieldsWhereYearIs(String testedValue) {
-        card = DataGenerator.Payment.generateCard();
-        $(By.xpath(xpathFieldCardNumber + xpathInputField)).setValue(card.getCardNumber());
-        $(By.xpath(xpathFieldMonth + xpathInputField)).setValue(card.getMonth());
-        $(By.xpath(xpathFieldYear + xpathInputField)).setValue(testedValue);
-        $(By.xpath(xpathFieldCardHolder + xpathInputField)).setValue(card.getCardHolder());
-        $(By.xpath(xpathFieldSecurityCode + xpathInputField)).setValue(card.getSecurityCode());
-        return this;
-    }
-
-    public PaymentPage fillingFieldsWhereCardHolderIs(String testedValue) {
-        card = DataGenerator.Payment.generateCard();
-        $(By.xpath(xpathFieldCardNumber + xpathInputField)).setValue(card.getCardNumber());
-        $(By.xpath(xpathFieldMonth + xpathInputField)).setValue(card.getMonth());
-        $(By.xpath(xpathFieldYear + xpathInputField)).setValue(card.getYear());
-        $(By.xpath(xpathFieldCardHolder + xpathInputField)).setValue(testedValue);
-        $(By.xpath(xpathFieldSecurityCode + xpathInputField)).setValue(card.getSecurityCode());
-        return this;
-    }
-
-    public PaymentPage fillingFieldsWhereSecurityCodeIs(String testedValue) {
-        card = DataGenerator.Payment.generateCard();
-        $(By.xpath(xpathFieldCardNumber + xpathInputField)).setValue(card.getCardNumber());
-        $(By.xpath(xpathFieldMonth + xpathInputField)).setValue(card.getMonth());
-        $(By.xpath(xpathFieldYear + xpathInputField)).setValue(card.getYear());
-        $(By.xpath(xpathFieldCardHolder + xpathInputField)).setValue(card.getCardHolder());
-        $(By.xpath(xpathFieldSecurityCode + xpathInputField)).setValue(testedValue);
-        return this;
-    }
-
-    public PaymentPage checkingSubscriptionFieldCardNumber(String Subscription) {
+    public PaymentPage checkingSubscriptionFieldCardNumber(String subscription) {
         $(By.xpath(xpathFieldCardNumber + xpathInputFieldSub))
                 .shouldBe(Condition.visible, Duration.ofSeconds(0))
-                .shouldHave(Condition.text(Subscription), Duration.ofSeconds(0));
+                .shouldHave(Condition.text(subscription), Duration.ofSeconds(0));
         $$(By.xpath(xpathInputFieldSub)).should(CollectionCondition.size(1), Duration.ofSeconds(0));
         return this;
     }
 
-    public PaymentPage checkingSubscriptionFieldMonth(String Subscription) {
+    public PaymentPage checkingSubscriptionFieldMonth(String subscription) {
         $(By.xpath(xpathFieldMonth + xpathInputFieldSub))
                 .shouldBe(Condition.visible, Duration.ofSeconds(0))
-                .shouldHave(Condition.text(Subscription), Duration.ofSeconds(0));
+                .shouldHave(Condition.text(subscription), Duration.ofSeconds(0));
         $$(By.xpath(xpathInputFieldSub)).should(CollectionCondition.size(1), Duration.ofSeconds(0));
         return this;
     }
 
-    public PaymentPage checkingSubscriptionFieldYear(String Subscription) {
+    public PaymentPage checkingSubscriptionFieldYear(String subscription) {
         $(By.xpath(xpathFieldYear + xpathInputFieldSub))
                 .shouldBe(Condition.visible, Duration.ofSeconds(0))
-                .shouldHave(Condition.text(Subscription), Duration.ofSeconds(0));
+                .shouldHave(Condition.text(subscription), Duration.ofSeconds(0));
         $$(By.xpath(xpathInputFieldSub)).should(CollectionCondition.size(1), Duration.ofSeconds(0));
         return this;
     }
 
-    public PaymentPage checkingSubscriptionFieldCardHolder(String Subscription) {
+    public PaymentPage checkingSubscriptionFieldCardHolder(String subscription) {
         $(By.xpath(xpathFieldCardHolder + xpathInputFieldSub))
                 .shouldBe(Condition.visible, Duration.ofSeconds(0))
-                .shouldHave(Condition.text(Subscription), Duration.ofSeconds(0));
+                .shouldHave(Condition.text(subscription), Duration.ofSeconds(0));
         $$(By.xpath(xpathInputFieldSub)).should(CollectionCondition.size(1), Duration.ofSeconds(0));
         return this;
     }
 
-    public PaymentPage checkingSubscriptionFieldSecurityCode(String Subscription) {
+    public PaymentPage checkingSubscriptionFieldSecurityCode(String subscription) {
         $(By.xpath(xpathFieldSecurityCode + xpathInputFieldSub))
                 .shouldBe(Condition.visible, Duration.ofSeconds(0))
-                .shouldHave(Condition.text(Subscription), Duration.ofSeconds(0));
+                .shouldHave(Condition.text(subscription), Duration.ofSeconds(0));
         $$(By.xpath(xpathInputFieldSub)).should(CollectionCondition.size(1), Duration.ofSeconds(0));
         return this;
     }

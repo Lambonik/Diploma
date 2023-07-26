@@ -3,7 +3,6 @@ package ru.netology.data;
 import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
 import lombok.Value;
-import lombok.experimental.UtilityClass;
 
 import java.sql.DriverManager;
 import java.time.LocalDate;
@@ -17,10 +16,7 @@ public class DataGenerator {
         }
 
         @SneakyThrows
-        public static String queryPayment(String paymentType) {
-            //String url = System.getProperty("spring.datasource.url");
-            String url = "jdbc:mysql://192.168.99.100:3306/app";
-            //String url = "jdbc:postgresql://192.168.99.100:5432/app";
+        public static String queryPayment(String paymentType, String url) {
             String statusSQL = null;
             if (paymentType == "Payment") {
                 statusSQL = "SELECT * FROM payment_entity LIMIT 1;";
@@ -28,15 +24,11 @@ public class DataGenerator {
                 statusSQL = "SELECT * FROM credit_request_entity LIMIT 1;";
             }
             var status = "0";
-            try (
-                    var connection = DriverManager.getConnection(url, "app", "pass");
-                    var statusStmt = connection.prepareStatement(statusSQL);
-            ) {
-                try (var rs = statusStmt.executeQuery()) {
-                    while (rs.next()) {
-                        status = rs.getString("status");
-                    }
-                }
+            var connection = DriverManager.getConnection(url, "app", "pass");
+            var statusStmt = connection.prepareStatement(statusSQL);
+            var rs = statusStmt.executeQuery();
+            while (rs.next()) {
+                status = rs.getString("status");
             }
             return status;
         }
@@ -45,7 +37,6 @@ public class DataGenerator {
     static Faker faker = new Faker(new Locale("en"));
 
     private DataGenerator() {
-
     }
 
     public static String generateCardNumber() {
@@ -88,11 +79,6 @@ public class DataGenerator {
         String declinedCardNumber = "4444 4444 4444 4442";
         return declinedCardNumber;
     }
-
-//    public static String generate15DigitNumber() {
-//        String 15DigitNumber=generateCardNumber().substring(1);
-//        return 15DigitNumber;
-//    }
 
     public static class Payment {
         private Payment() {
