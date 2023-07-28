@@ -43,7 +43,7 @@ public class PaymentTest {
         paymentPage.buttonPayment();
 
         paymentPage.checkApprovedNotification();
-        String status = DataGenerator.Query.queryPayment(paymentPage.typePayment, System.getProperty("spring.datasource.url"));
+        String status = DataGenerator.Query.queryPayment("Payment");
         Assertions.assertEquals("APPROVED", status);
     }
 
@@ -55,8 +55,8 @@ public class PaymentTest {
         paymentPage.buttonPayment();
 
         paymentPage.checkDeclinedNotification();
-        //String status = DataGenerator.Query.queryPayment(paymentPage.typePayment);
-        //Assertions.assertEquals("DECLINED", status);
+        String status = DataGenerator.Query.queryPayment("Payment");
+        Assertions.assertEquals("DECLINED", status);
     }
 
     @Test
@@ -67,8 +67,8 @@ public class PaymentTest {
         paymentPage.buttonPayment();
 
         paymentPage.checkApprovedNotification();
-        //String status = DataGenerator.Query.queryPayment(paymentPage.typePayment);
-        //Assertions.assertEquals("APPROVED", status);
+        String status = DataGenerator.Query.queryPayment("Credit");
+        Assertions.assertEquals("APPROVED", status);
     }
 
     @Test
@@ -79,8 +79,8 @@ public class PaymentTest {
         paymentPage.buttonPayment();
 
         paymentPage.checkDeclinedNotification();
-        //String status = DataGenerator.Query.queryPayment(paymentPage.typePayment);
-        //Assertions.assertEquals("DECLINED", status);
+        String status = DataGenerator.Query.queryPayment("Credit");
+        Assertions.assertEquals("DECLINED", status);
     }
 
     @Test
@@ -218,9 +218,8 @@ public class PaymentTest {
     @Test
     void case11PaymentIfMonthValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
-        String randomNum = LocalDate.now().minusMonths(ThreadLocalRandom.current().nextInt(1, LocalDate.now().getMonthValue() - 1)).format(DateTimeFormatter.ofPattern("MM"));
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), randomNum, card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMountLessThanCurrent(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверно указан срок действия карты");
@@ -230,9 +229,8 @@ public class PaymentTest {
     @Test
     void case11_1CreditIfMonthValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
-        String randomNum = LocalDate.now().minusMonths(ThreadLocalRandom.current().nextInt(1, LocalDate.now().getMonthValue() - 1)).format(DateTimeFormatter.ofPattern("MM"));
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), randomNum, card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMountLessThanCurrent(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверно указан срок действия карты");
@@ -262,11 +260,10 @@ public class PaymentTest {
     }
 
     @Test
-    void case13PaymentIfYearValueMoreThanCurrent() {
+    void case13PaymentIfYearValueMoreThanCurrentBy5() {
         var paymentPage = new PaymentPage();
-        String randomNum = String.valueOf(ThreadLocalRandom.current().nextInt(Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) + 6, 99));
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), randomNum, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearMoreThanCurrentBy5(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
@@ -274,11 +271,10 @@ public class PaymentTest {
     }
 
     @Test
-    void case13_1CreditIfYearValueMoreThanCurrent() {
+    void case13_1CreditIfYearMoreThanCurrentBy5() {
         var paymentPage = new PaymentPage();
-        String randomNum = String.valueOf(ThreadLocalRandom.current().nextInt(Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) + 6, 99));
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), randomNum, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearMoreThanCurrentBy5(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
@@ -286,26 +282,24 @@ public class PaymentTest {
     }
 
     @Test
-    void case14PaymentIfYearValueMoreLessThanCurrentBy5() {
+    void case14PaymentIfYearValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
-        String randomNum = LocalDate.now().minusYears(ThreadLocalRandom.current().nextInt(1, Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) - 1)).format(DateTimeFormatter.ofPattern("YY"));
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), randomNum, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearLessThanCurrent(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
-        paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
+        paymentPage.checkingSubscriptionFieldYear("Истёк срок действия карты");
         paymentPage.checkingButtonPayment();
     }
 
     @Test
-    void case14_1CreditIfYearValueMoreLessThanCurrentBy5() {
+    void case14_1CreditIfYearValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
-        String randomNum = LocalDate.now().minusYears(ThreadLocalRandom.current().nextInt(1, Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) - 1)).format(DateTimeFormatter.ofPattern("YY"));
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), randomNum, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearLessThanCurrent(), card.getCardHolder(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
-        paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
+        paymentPage.checkingSubscriptionFieldYear("Истёк срок действия карты");
         paymentPage.checkingButtonPayment();
     }
 
@@ -422,9 +416,8 @@ public class PaymentTest {
     @Test
     void case20PaymentIfCardHolderContainsDigit() {
         var paymentPage = new PaymentPage();
-        String randomNum = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9));
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), randomNum, card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getDigit(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");
@@ -434,9 +427,8 @@ public class PaymentTest {
     @Test
     void case20_1CreditIfCardHolderContainsDigit() {
         var paymentPage = new PaymentPage();
-        String randomNum = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9));
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), randomNum, card.getSecurityCode());
+        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getDigit(), card.getSecurityCode());
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");

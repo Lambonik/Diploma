@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class DataGenerator {
@@ -16,7 +17,8 @@ public class DataGenerator {
         }
 
         @SneakyThrows
-        public static String queryPayment(String paymentType, String url) {
+        public static String queryPayment(String paymentType) {
+            String url = System.getProperty("spring.datasource.url");
             String statusSQL = null;
             if (paymentType == "Payment") {
                 statusSQL = "SELECT * FROM payment_entity LIMIT 1;";
@@ -80,12 +82,34 @@ public class DataGenerator {
         return declinedCardNumber;
     }
 
+    public static String generateMountLessThanCurrent() {
+        String mountLessThanCurrent = LocalDate.now().minusMonths(ThreadLocalRandom.current().nextInt(1, LocalDate.now().getMonthValue() - 1)).format(DateTimeFormatter.ofPattern("MM"));
+        return mountLessThanCurrent;
+    }
+
+    public static String generateYearLessThanCurrent() {
+        String yearLessThanCurrent = LocalDate.now().minusYears(ThreadLocalRandom.current().nextInt(1, Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) - 1)).format(DateTimeFormatter.ofPattern("YY"));
+        return yearLessThanCurrent;
+    }
+
+    public static String generateYearMoreThanCurrentBy5() {
+        String yearMoreThanCurrentBy5 = String.valueOf(ThreadLocalRandom.current().nextInt(Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("YY"))) + 6, 99));
+        return yearMoreThanCurrentBy5;
+    }
+
+    public static String generateDigit() {
+        String digit = String.valueOf(ThreadLocalRandom.current().nextInt(0, 9));
+        return digit;
+    }
+
     public static class Payment {
         private Payment() {
         }
 
         public static CardInfo generateCard() {
-            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode(), generateCardHolderCyrillic(), generateApprovedCardNumber(), generateDeclinedCardNumber());
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode(),
+                    generateCardHolderCyrillic(), generateApprovedCardNumber(), generateDeclinedCardNumber(), generateMountLessThanCurrent(),
+                    generateYearLessThanCurrent(), generateYearMoreThanCurrentBy5(), generateDigit());
             return card;
         }
     }
@@ -100,5 +124,9 @@ public class DataGenerator {
         String cardHolderCyrillic;
         String approvedCardNumber;
         String declinedCardNumber;
+        String mountLessThanCurrent;
+        String yearLessThanCurrent;
+        String yearMoreThanCurrentBy5;
+        String digit;
     }
 }

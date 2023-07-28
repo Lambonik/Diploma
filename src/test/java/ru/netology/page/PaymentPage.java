@@ -21,19 +21,16 @@ public class PaymentPage {
     String xpathFieldSecurityCode = "//*[@class='input__top'][text()='CVC/CVV']/..";
     String xpathInputField = "//*[@class='input__control']";
     String xpathInputFieldSub = "//*[@class='input__sub']";
-    public static String typePayment;
 
     public PaymentPage buttonSelectFormPayment() {
         $$("button").find(exactText("Купить")).click();
         $$("h3").find(exactText("Оплата по карте")).shouldBe(exist, Duration.ofSeconds(0));
-        typePayment = "Payment";
         return this;
     }
 
     public PaymentPage buttonSelectFormCredit() {
         $$("button").find(exactText("Купить в кредит")).click();
         $$("h3").find(exactText("Кредит по данным карты")).shouldBe(exist, Duration.ofSeconds(0));
-        typePayment = "Credit";
         return this;
     }
 
