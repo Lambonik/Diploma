@@ -21,9 +21,9 @@ public class DataGenerator {
             String url = System.getProperty("spring.datasource.url");
             String statusSQL = null;
             if (paymentType == "Payment") {
-                statusSQL = "SELECT * FROM payment_entity LIMIT 1;";
+                statusSQL = "SELECT * FROM payment_entity WHERE id=LAST_INSERT_ID();";
             } else if (paymentType == "Credit") {
-                statusSQL = "SELECT * FROM credit_request_entity LIMIT 1;";
+                statusSQL = "SELECT * FROM credit_request_entity WHERE id=LAST_INSERT_ID();";
             }
             var status = "0";
             var connection = DriverManager.getConnection(url, "app", "pass");
@@ -106,10 +106,93 @@ public class DataGenerator {
         private Payment() {
         }
 
-        public static CardInfo generateCard() {
-            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode(),
-                    generateCardHolderCyrillic(), generateApprovedCardNumber(), generateDeclinedCardNumber(), generateMountLessThanCurrent(),
-                    generateYearLessThanCurrent(), generateYearMoreThanCurrentBy5(), generateDigit());
+        public static CardInfo generateCardWithCardNumberIsEmpty() {
+            CardInfo card = new CardInfo(null, generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithMonthIsEmpty() {
+            CardInfo card = new CardInfo(generateCardNumber(), null, generateYear(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithYearIsEmpty() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), null, generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithCardHolderIsEmpty() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), null, generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithSecurityCodeIsEmpty() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolder(), null);
+            return card;
+        }
+
+        public static CardInfo generateCardWithCardHolderCyrillic() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateCardHolderCyrillic(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithApprovedCardNumber() {
+            CardInfo card = new CardInfo(generateApprovedCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithDeclinedCardNumber() {
+            CardInfo card = new CardInfo(generateDeclinedCardNumber(), generateMonth(), generateYear(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithMountLessThanCurrent() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMountLessThanCurrent(), generateYear(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithYearLessThanCurrent() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYearLessThanCurrent(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithYearMoreThanCurrentBy5() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYearMoreThanCurrentBy5(), generateCardHolder(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithCardHolderDigit() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateDigit(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithCardNumberIs15Digits() {
+            CardInfo card = new CardInfo(generateCardNumber().substring(1), generateMonth(), generateYear(), generateDigit(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithCardNumberIs1Digit() {
+            CardInfo card = new CardInfo(generateCardNumber().substring(15), generateMonth(), generateYear(), generateDigit(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithMonthValue_00() {
+            CardInfo card = new CardInfo(generateCardNumber(), "00", generateYear(), generateDigit(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithMonthValue_13() {
+            CardInfo card = new CardInfo(generateCardNumber(), "13", generateYear(), generateDigit(), generateSecurityCode());
+            return card;
+        }
+
+        public static CardInfo generateCardWithSecurityCodeIs1Digit() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateDigit(), generateSecurityCode().substring(2));
+            return card;
+        }
+
+        public static CardInfo generateCardWithSecurityCodeIs2Digits() {
+            CardInfo card = new CardInfo(generateCardNumber(), generateMonth(), generateYear(), generateDigit(), generateSecurityCode().substring(1));
             return card;
         }
     }
@@ -121,12 +204,5 @@ public class DataGenerator {
         String year;
         String cardHolder;
         String securityCode;
-        String cardHolderCyrillic;
-        String approvedCardNumber;
-        String declinedCardNumber;
-        String mountLessThanCurrent;
-        String yearLessThanCurrent;
-        String yearMoreThanCurrentBy5;
-        String digit;
     }
 }

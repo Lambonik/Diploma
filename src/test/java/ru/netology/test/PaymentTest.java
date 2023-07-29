@@ -17,7 +17,24 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class PaymentTest {
-    private DataGenerator.CardInfo card = DataGenerator.Payment.generateCard();
+    private DataGenerator.CardInfo cardWithCardNumberIsEmpty = DataGenerator.Payment.generateCardWithCardNumberIsEmpty();
+    private DataGenerator.CardInfo cardWithMonthIsEmpty = DataGenerator.Payment.generateCardWithMonthIsEmpty();
+    private DataGenerator.CardInfo cardWithYearIsEmpty = DataGenerator.Payment.generateCardWithYearIsEmpty();
+    private DataGenerator.CardInfo cardWithCardHolderIsEmpty = DataGenerator.Payment.generateCardWithCardHolderIsEmpty();
+    private DataGenerator.CardInfo cardWithSecurityCodeIsEmpty = DataGenerator.Payment.generateCardWithSecurityCodeIsEmpty();
+    private DataGenerator.CardInfo cardWithApprovedCardNumber = DataGenerator.Payment.generateCardWithApprovedCardNumber();
+    private DataGenerator.CardInfo cardWithDeclinedCardNumber = DataGenerator.Payment.generateCardWithDeclinedCardNumber();
+    private DataGenerator.CardInfo cardWithMountLessThanCurrent = DataGenerator.Payment.generateCardWithMountLessThanCurrent();
+    private DataGenerator.CardInfo cardWithCardHolderCyrillic = DataGenerator.Payment.generateCardWithCardHolderCyrillic();
+    private DataGenerator.CardInfo cardWithYearLessThanCurrent = DataGenerator.Payment.generateCardWithYearLessThanCurrent();
+    private DataGenerator.CardInfo cardWithYearMoreThanCurrentBy5 = DataGenerator.Payment.generateCardWithYearMoreThanCurrentBy5();
+    private DataGenerator.CardInfo cardWithCardHolderDigit = DataGenerator.Payment.generateCardWithCardHolderDigit();
+    private DataGenerator.CardInfo cardWithCardNumberIs15Digits = DataGenerator.Payment.generateCardWithCardNumberIs15Digits();
+    private DataGenerator.CardInfo cardWithCardNumberIs1Digit = DataGenerator.Payment.generateCardWithCardNumberIs1Digit();
+    private DataGenerator.CardInfo cardWithMonthValue_00 = DataGenerator.Payment.generateCardWithMonthValue_00();
+    private DataGenerator.CardInfo cardWithMonthValue_13 = DataGenerator.Payment.generateCardWithMonthValue_13();
+    private DataGenerator.CardInfo cardWithSecurityCodeIs1Digit = DataGenerator.Payment.generateCardWithSecurityCodeIs1Digit();
+    private DataGenerator.CardInfo cardWithSecurityCodeIs2Digits = DataGenerator.Payment.generateCardWithSecurityCodeIs2Digits();
 
     @BeforeAll
     static void setUpAll() {
@@ -39,7 +56,7 @@ public class PaymentTest {
     void case1ShouldApprovedPayment() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getApprovedCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithApprovedCardNumber);
         paymentPage.buttonPayment();
 
         paymentPage.checkApprovedNotification();
@@ -51,7 +68,7 @@ public class PaymentTest {
     void case2ShouldDeclinedPayment() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getDeclinedCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithDeclinedCardNumber);
         paymentPage.buttonPayment();
 
         paymentPage.checkDeclinedNotification();
@@ -63,7 +80,7 @@ public class PaymentTest {
     void case3ShouldApprovedCredit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getApprovedCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithApprovedCardNumber);
         paymentPage.buttonPayment();
 
         paymentPage.checkApprovedNotification();
@@ -75,7 +92,7 @@ public class PaymentTest {
     void case4ShouldDeclinedCredit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getDeclinedCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithDeclinedCardNumber);
         paymentPage.buttonPayment();
 
         paymentPage.checkDeclinedNotification();
@@ -87,7 +104,7 @@ public class PaymentTest {
     void case5PaymentIfCardNumberIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(null, card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Поле обязательно для заполнения");
@@ -98,7 +115,7 @@ public class PaymentTest {
     void case5_1CreditIfCardNumberIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(null, card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Поле обязательно для заполнения");
@@ -109,7 +126,7 @@ public class PaymentTest {
     void case6PaymentIfCardNumberIs15Digits() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber().substring(1), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIs15Digits);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Неверный формат");
@@ -120,7 +137,7 @@ public class PaymentTest {
     void case6_1CreditPaymentIfCardNumberIs15Digits() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber().substring(1), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIs15Digits);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Неверный формат");
@@ -131,7 +148,7 @@ public class PaymentTest {
     void case7PaymentIfCardNumberIs1Digit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber().substring(15), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIs1Digit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Неверный формат");
@@ -142,7 +159,7 @@ public class PaymentTest {
     void case7_1CreditIfCardNumberIs1Digit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber().substring(15), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardNumberIs1Digit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardNumber("Неверный формат");
@@ -153,7 +170,7 @@ public class PaymentTest {
     void case8PaymentIfMonthIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), null, card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Поле обязательно для заполнения");
@@ -164,7 +181,7 @@ public class PaymentTest {
     void case8_1CreditIfMonthIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), null, card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Поле обязательно для заполнения");
@@ -175,7 +192,7 @@ public class PaymentTest {
     void case9PaymentIfMonthValue_00() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), "00", card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthValue_00);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверный формат");
@@ -186,7 +203,7 @@ public class PaymentTest {
     void case9_1CreditIfMonthValue_00() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), "00", card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthValue_00);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверный формат");
@@ -197,7 +214,7 @@ public class PaymentTest {
     void case10PaymentIfMonthValue_13() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), "13", card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthValue_13);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверный формат");
@@ -208,7 +225,7 @@ public class PaymentTest {
     void case10_1CreditIfMonthValue_13() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), "13", card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMonthValue_13);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверный формат");
@@ -219,7 +236,7 @@ public class PaymentTest {
     void case11PaymentIfMonthValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMountLessThanCurrent(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMountLessThanCurrent);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверно указан срок действия карты");
@@ -230,7 +247,7 @@ public class PaymentTest {
     void case11_1CreditIfMonthValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMountLessThanCurrent(), card.getYear(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithMountLessThanCurrent);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldMonth("Неверно указан срок действия карты");
@@ -241,7 +258,7 @@ public class PaymentTest {
     void case12PaymentIfYearIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), null, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Поле обязательно для заполнения");
@@ -252,7 +269,7 @@ public class PaymentTest {
     void case12_1CreditIfYearIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), null, card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Поле обязательно для заполнения");
@@ -263,7 +280,7 @@ public class PaymentTest {
     void case13PaymentIfYearValueMoreThanCurrentBy5() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearMoreThanCurrentBy5(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearMoreThanCurrentBy5);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
@@ -274,7 +291,7 @@ public class PaymentTest {
     void case13_1CreditIfYearMoreThanCurrentBy5() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearMoreThanCurrentBy5(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearMoreThanCurrentBy5);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Неверно указан срок действия карты");
@@ -285,7 +302,7 @@ public class PaymentTest {
     void case14PaymentIfYearValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearLessThanCurrent(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearLessThanCurrent);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Истёк срок действия карты");
@@ -296,7 +313,7 @@ public class PaymentTest {
     void case14_1CreditIfYearValueLessThanCurrent() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYearLessThanCurrent(), card.getCardHolder(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithYearLessThanCurrent);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldYear("Истёк срок действия карты");
@@ -307,7 +324,7 @@ public class PaymentTest {
     void case15PaymentIfSecurityCodeIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), null);
+        paymentPage.fillingFields(cardWithSecurityCodeIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Поле обязательно для заполнения");
@@ -318,7 +335,7 @@ public class PaymentTest {
     void case15_1CreditIfSecurityCodeIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), null);
+        paymentPage.fillingFields(cardWithSecurityCodeIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Поле обязательно для заполнения");
@@ -329,7 +346,7 @@ public class PaymentTest {
     void case16PaymentIfSecurityCodeIs1Digit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode().substring(1));
+        paymentPage.fillingFields(cardWithSecurityCodeIs1Digit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Неверный формат");
@@ -340,7 +357,7 @@ public class PaymentTest {
     void case16_1CreditIfSecurityCodeIs1Digit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode().substring(1));
+        paymentPage.fillingFields(cardWithSecurityCodeIs1Digit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Неверный формат");
@@ -351,7 +368,7 @@ public class PaymentTest {
     void case17PaymentIfSecurityCodeIs2Digits() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode().substring(2));
+        paymentPage.fillingFields(cardWithSecurityCodeIs2Digits);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Неверный формат");
@@ -362,7 +379,7 @@ public class PaymentTest {
     void case17_1CreditIfSecurityCodeIs2Digits() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolder(), card.getSecurityCode().substring(2));
+        paymentPage.fillingFields(cardWithSecurityCodeIs2Digits);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldSecurityCode("Неверный формат");
@@ -373,7 +390,7 @@ public class PaymentTest {
     void case18PaymentIfCardHolderIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), null, card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Поле обязательно для заполнения");
@@ -384,7 +401,7 @@ public class PaymentTest {
     void case18_1CreditIfCardHolderIsEmpty() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), null, card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderIsEmpty);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Поле обязательно для заполнения");
@@ -395,7 +412,7 @@ public class PaymentTest {
     void case19PaymentIfCardHolderContainsCyrillic() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolderCyrillic(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderCyrillic);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");
@@ -406,7 +423,7 @@ public class PaymentTest {
     void case19_1CreditIfCardHolderContainsCyrillic() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getCardHolderCyrillic(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderCyrillic);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");
@@ -417,7 +434,7 @@ public class PaymentTest {
     void case20PaymentIfCardHolderContainsDigit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormPayment();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getDigit(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderDigit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");
@@ -428,7 +445,7 @@ public class PaymentTest {
     void case20_1CreditIfCardHolderContainsDigit() {
         var paymentPage = new PaymentPage();
         paymentPage.buttonSelectFormCredit();
-        paymentPage.fillingFields(card.getCardNumber(), card.getMonth(), card.getYear(), card.getDigit(), card.getSecurityCode());
+        paymentPage.fillingFields(cardWithCardHolderDigit);
         paymentPage.buttonPayment();
 
         paymentPage.checkingSubscriptionFieldCardHolder("Неверный формат");
