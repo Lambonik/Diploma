@@ -21,9 +21,9 @@ public class DataGenerator {
             String url = System.getProperty("spring.datasource.url");
             String statusSQL = null;
             if (paymentType == "Payment") {
-                statusSQL = "SELECT * FROM payment_entity WHERE id=LAST_INSERT_ID();";
+                statusSQL = "SELECT status FROM payment_entity ORDER by created DESC LIMIT 1";
             } else if (paymentType == "Credit") {
-                statusSQL = "SELECT * FROM credit_request_entity WHERE id=LAST_INSERT_ID();";
+                statusSQL = "SELECT status FROM credit_request_entity ORDER by created DESC LIMIT 1";
             }
             var status = "0";
             var connection = DriverManager.getConnection(url, "app", "pass");
